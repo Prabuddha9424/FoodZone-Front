@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root{
+    /*primary color*/
+    --primary-color: #faad14;
+    --warning-color: #fa541c;
+    --background-color: #050606;
+}
