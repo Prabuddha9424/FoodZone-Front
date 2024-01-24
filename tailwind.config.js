@@ -12,6 +12,7 @@ export default {
         BackgroundColor: "var(--background-color)",
       },
     },
+    
   },
   plugins: [
     function ({ addVariant }) {

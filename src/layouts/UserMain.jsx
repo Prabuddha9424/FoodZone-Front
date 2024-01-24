@@ -13,6 +13,7 @@ import {
     SettingOutlined, TwitterOutlined, WhatsAppOutlined, YoutubeOutlined
 } from '@ant-design/icons';
 import {useState} from "react";
+import { Link, Outlet } from 'react-router-dom';
 
 const {Header, Footer, Content} = Layout;
 
@@ -25,11 +26,11 @@ function getItem(label, key, icon) {
 }
 
 const items = [
-    getItem('Home', 1, <MailOutlined/>),
-    getItem('Menu', 2, <AppstoreOutlined/>),
-    getItem('Items', 3, <SettingOutlined/>),
-    getItem('About', 4, <SettingOutlined/>),
-    getItem('Contact Us', 5, <SettingOutlined/>)
+    getItem(<Link to="/Home">Home</Link>, 1, <MailOutlined/>),
+    getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
+    getItem(<Link to="/items">Items</Link>, 3, <SettingOutlined/>),
+    getItem(<Link to="/about">About</Link>, 4, <SettingOutlined/>),
+    getItem(<Link to="/contact-us">Contacu Us</Link>, 5, <SettingOutlined/>)
 ];
 
 function UserMain() {
@@ -54,8 +55,7 @@ function UserMain() {
                     colorBgBase: "#050606",
                     borderRadius: 13,
                 },
-                algorithm: theme.darkAlgorithm,
-                components: {},
+                algorithm: theme.darkAlgorithm
             }}
         >
             <Layout className='border border-red-700 w-screen'>
@@ -75,24 +75,16 @@ function UserMain() {
                     </div>
                 </Header>
 
-                <Content style={{padding: '0 48px',}}>
+                <Content style={{padding: '0 48px',}} className='bg-transparent'>
                     <Breadcrumb style={{margin: '16px 0',}}>
                         <Breadcrumb.Item>Home</Breadcrumb.Item>
                         <Breadcrumb.Item>List</Breadcrumb.Item>
                         <Breadcrumb.Item>App</Breadcrumb.Item>
                     </Breadcrumb>
-                    <div style={{
-                        minHeight: 280,
-                        padding: 24,
-                    }}
-                         className="border border-orange-700 h-auto"
-                    >
-                        Content
-                        <div className="h-40 w-full bg-purple-600"></div>
-                        <div className="h-40 w-full bg-yellow-500"></div>
-                        <div className="h-40 w-full bg-purple-600"></div>
-                        <div className="h-40 w-full bg-amber-50"></div>
-                    </div>
+                    {/* <div className="border border-orange-700 h-auto">
+                        <Outlet/>
+                    </div> */}
+                    <Outlet/>
                 </Content>
 
                 <Footer style={{textAlign: 'center',}} className="pb-1">
