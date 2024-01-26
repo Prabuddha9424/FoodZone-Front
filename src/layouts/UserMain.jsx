@@ -1,4 +1,4 @@
-import {Breadcrumb, Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
+import {Breadcrumb, Button, Col, ConfigProvider, Form, Input, Layout, Menu, Row, theme} from 'antd';
 import AppLogo from '../assets/images/foodZone-logo.png'
 import VisaLogo from '../assets/images/visa.png'
 import MasterCardLogo from '../assets/images/master.png'
@@ -27,10 +27,10 @@ function getItem(label, key, icon) {
 
 const items = [
     getItem(<Link to="/Home">Home</Link>, 1, <MailOutlined/>),
-    getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
+    // getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
     getItem(<Link to="/items">Items</Link>, 3, <SettingOutlined/>),
     getItem(<Link to="/about">About</Link>, 4, <SettingOutlined/>),
-    getItem(<Link to="/contact-us">Contacu Us</Link>, 5, <SettingOutlined/>)
+    getItem(<Link to="/contact-us">Contact Us</Link>, 5, <SettingOutlined/>)
 ];
 
 function UserMain() {
@@ -48,6 +48,7 @@ function UserMain() {
     return (
         <ConfigProvider
             theme={{
+                algorithm: theme.darkAlgorithm,
                 token: {
                     colorPrimary: "#faad14",
                     colorInfo: "#faad14",
@@ -55,11 +56,38 @@ function UserMain() {
                     colorBgBase: "#050606",
                     borderRadius: 13,
                 },
-                algorithm: theme.darkAlgorithm
+                components: {
+                    Typography: {
+                        fontSizeHeading1: 60
+
+                    },
+                    Carousel: {
+                        colorBgContainer: "#faad14",
+                        dotHeight: 10
+                    },
+                    Card: {
+                        colorTextDescription: "var(--text-color)",
+                        colorTextHeading: "var(--text-color)",
+                        colorBgContainer: "#050606",
+                        colorBorderSecondary: "var(--primary-color)",
+                        boxShadowCard: "      0 1px 2px -2px var(--primary-shadow-color),      0 3px 6px 0 var(--primary-shadow-color),      0 5px 12px 4px var(--primary-shadow-color)    "
+                    },
+                    Button: {
+                        colorPrimaryHover: "var(--primary-color)"
+                    },
+                    Select: {
+                        controlHeight: 45,
+                        lineHeight: 2
+                    },
+                    Input: {
+                        controlHeight: 45,
+                        lineHeight: 2
+                    }
+            }
             }}
         >
-            <Layout className='border border-red-700 w-screen'>
-                <Header className='w-full h-[120px] flex items-center bg-BackgroundColor sticky top-0 mt-5'>
+            <Layout>
+                <Header className='w-full h-[120px] flex items-center bg-BackgroundColor sticky top-0 mt-5 z-10'>
                     <div className="w-[120px] h-auto mr-4">
                         <img src={AppLogo} alt="Logo"/>
                     </div>
@@ -74,16 +102,12 @@ function UserMain() {
                         />
                     </div>
                 </Header>
-
-                <Content style={{padding: '0 48px',}} className='bg-transparent'>
+                <Content style={{padding: '0 48px',}}>
                     <Breadcrumb style={{margin: '16px 0',}}>
                         <Breadcrumb.Item>Home</Breadcrumb.Item>
                         <Breadcrumb.Item>List</Breadcrumb.Item>
                         <Breadcrumb.Item>App</Breadcrumb.Item>
                     </Breadcrumb>
-                    {/* <div className="border border-orange-700 h-auto">
-                        <Outlet/>
-                    </div> */}
                     <Outlet/>
                 </Content>
 
