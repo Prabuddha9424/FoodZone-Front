@@ -1,11 +1,10 @@
-import {Breadcrumb, Button, Col, ConfigProvider, Form, Input, Layout, Menu, Row, theme} from 'antd';
+import {Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
 import AppLogo from '../assets/images/foodZone-logo.png'
 import VisaLogo from '../assets/images/visa.png'
 import MasterCardLogo from '../assets/images/master.png'
 import AmexLogo from '../assets/images/amex.png'
 import PaypalLogo from '../assets/images/paypal.png'
 import {
-    AppstoreOutlined,
     EnvironmentOutlined,
     FacebookOutlined, InstagramOutlined,
     MailOutlined,
@@ -74,14 +73,6 @@ function UserMain() {
                     },
                     Button: {
                         colorPrimaryHover: "var(--primary-color)"
-                    },
-                    Select: {
-                        controlHeight: 45,
-                        lineHeight: 2
-                    },
-                    Input: {
-                        controlHeight: 45,
-                        lineHeight: 2
                     }
             }
             }}
@@ -103,11 +94,6 @@ function UserMain() {
                     </div>
                 </Header>
                 <Content style={{padding: '0 48px',}}>
-                    <Breadcrumb style={{margin: '16px 0',}}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>App</Breadcrumb.Item>
-                    </Breadcrumb>
                     <Outlet/>
                 </Content>
 
