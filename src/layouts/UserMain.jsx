@@ -25,7 +25,7 @@ function getItem(label, key, icon) {
 }
 
 const items = [
-    getItem(<Link to="/Home">Home</Link>, 1, <MailOutlined/>),
+    getItem(<Link to="/">Home</Link>, 1, <MailOutlined/>),
     // getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
     getItem(<Link to="/items">Items</Link>, 3, <SettingOutlined/>),
     getItem(<Link to="/about">About</Link>, 4, <SettingOutlined/>),
