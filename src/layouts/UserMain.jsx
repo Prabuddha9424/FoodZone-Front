@@ -1,20 +1,27 @@
-import {Breadcrumb, Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
+import {Badge, Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
 import AppLogo from '../assets/images/foodZone-logo.png'
 import VisaLogo from '../assets/images/visa.png'
 import MasterCardLogo from '../assets/images/master.png'
 import AmexLogo from '../assets/images/amex.png'
 import PaypalLogo from '../assets/images/paypal.png'
 import {
-    AppstoreOutlined,
     EnvironmentOutlined,
     FacebookOutlined, InstagramOutlined,
     MailOutlined,
     PhoneOutlined,
     SettingOutlined, TwitterOutlined, WhatsAppOutlined, YoutubeOutlined
 } from '@ant-design/icons';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { Link, Outlet } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import {FaShoppingCart, FaStore, FaUser} from "react-icons/fa";
+import {LiaSignOutAltSolid} from "react-icons/lia";
+import {countCustomerOrders} from "../helpers/ApiHelpers.js";
+import {IoFastFoodSharp} from "react-icons/io5";
+import {BiSolidDetail} from "react-icons/bi";
+import {RiContactsFill, RiLogoutCircleRFill} from "react-icons/ri";
+import { useLocation } from 'react-router-dom';
+import Cookies from "js-cookie";
 const {Header, Footer, Content} = Layout;
 
 function getItem(label, key, icon) {
@@ -26,28 +33,51 @@ function getItem(label, key, icon) {
 }
 
 const items = [
-    getItem(<Link to="/Home">Home</Link>, 1, <MailOutlined/>),
-    getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
-    getItem(<Link to="/items">Items</Link>, 3, <SettingOutlined/>),
-    getItem(<Link to="/about">About</Link>, 4, <SettingOutlined/>),
-    getItem(<Link to="/contact-us">Contacu Us</Link>, 5, <SettingOutlined/>)
+    getItem(<Link to="/">Home</Link>, "/", <FaStore />),
+    // getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
+    getItem(<Link to="/items">Items</Link>, "/items", <IoFastFoodSharp />),
+    getItem(<Link to="/about">About</Link>, "/about", <BiSolidDetail />),
+    getItem(<Link to="/contact-us">Contact Us</Link>, "/contact-us", <RiContactsFill />)
 ];
 
 function UserMain() {
-    const [current, setCurrent] = useState('1');
+    const navigate = useNavigate();
+    const [customerOrder, setCustomerOrder] = useState()
+    const [current, setCurrent] = useState('/');
+    const location = useLocation();
+    useEffect(() => {
+        countCompletedOrders();
+        const pathSegments = location.pathname;
+        setCurrent(pathSegments);
+    }, []);
     const onClick = (e) => {
         console.log('click ', e);
         setCurrent(e.key);
     };
-    const onFinish = (values) => {
-        console.log('Success:', values);
+    const logout = () => {
+        Cookies.remove('token');
+        localStorage.removeItem("token");
+        navigate("/login");
     };
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+    const goToCart = async () => {
+        const token =await Cookies.get('token');
+        console.log(token)
+        if ((token === null) || (token === "") ||(token=== undefined)){
+            navigate("/login");
+        }else {
+            navigate("/cart");
+        }
+    };
+    const countCompletedOrders = async () => {
+        const response = await countCustomerOrders(localStorage.getItem("email"));
+        setCustomerOrder(response ? response.data : "");
+        console.log(localStorage.getItem("email"))
+        console.log(response.data)
     };
     return (
         <ConfigProvider
             theme={{
+                algorithm: theme.darkAlgorithm,
                 token: {
                     colorPrimary: "#faad14",
                     colorInfo: "#faad14",
@@ -55,35 +85,59 @@ function UserMain() {
                     colorBgBase: "#050606",
                     borderRadius: 13,
                 },
-                algorithm: theme.darkAlgorithm
+                components: {
+                    Typography: {
+                        fontSizeHeading1: 60
+
+                    },
+                    Carousel: {
+                        colorBgContainer: "#faad14",
+                        dotHeight: 10
+                    },
+                    Card: {
+                        colorTextDescription: "var(--text-color)",
+                        colorTextHeading: "var(--text-color)",
+                        colorBgContainer: "#050606",
+                        colorBorderSecondary: "var(--primary-color)",
+                        boxShadowCard: "      0 1px 2px -2px var(--primary-shadow-color),      0 3px 6px 0 var(--primary-shadow-color),      0 5px 12px 4px var(--primary-shadow-color)    "
+                    },
+                    Button: {
+                        colorPrimaryHover: "var(--primary-color)"
+                    }
+            }
             }}
         >
-            <Layout className='border border-red-700 w-screen'>
-                <Header className='w-full h-[120px] flex items-center bg-BackgroundColor sticky top-0 mt-5'>
+            <Layout>
+                <Header className='w-full h-[120px] flex items-center bg-BackgroundColor sticky top-0 mt-5 z-10'>
                     <div className="w-[120px] h-auto mr-4">
                         <img src={AppLogo} alt="Logo"/>
                     </div>
                     <div className="w-full h-20 flex items-center justify-center">
                         <Menu
                             onClick={onClick}
-                            defaultOpenKeys={[1]}
+                            defaultOpenKeys={["/"]}
                             selectedKeys={[current]}
                             mode="horizontal"
                             items={items}
                             className="bg-transparent w-full"
                         />
                     </div>
-                </Header>
+                    <div className="flex items-baseline">
+                        {/*<Button className="border-none mr-6" onClick={()=>{navigate("/login")}}>
+                            <FaUser />
+                        </Button>*/}
+                        <Badge count={customerOrder} color="var(--primary-color)">
+                            <Button className="border-none" onClick={goToCart}>
+                                <FaShoppingCart />
+                            </Button>
+                        </Badge>
+                        <Button className="border-none ml-6" onClick={logout}>
+                            <RiLogoutCircleRFill />
+                        </Button>
 
-                <Content style={{padding: '0 48px',}} className='bg-transparent'>
-                    <Breadcrumb style={{margin: '16px 0',}}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>App</Breadcrumb.Item>
-                    </Breadcrumb>
-                    {/* <div className="border border-orange-700 h-auto">
-                        <Outlet/>
-                    </div> */}
+                    </div>
+                </Header>
+                <Content style={{padding: '0 48px',}}>
                     <Outlet/>
                 </Content>
 
@@ -142,8 +196,14 @@ function UserMain() {
                         <div className="w-5/12 h-full flex flex-col items-start">
                             <h1 className="text-xl font-medium mb-5">Stay Connected</h1>
                             <p className="pb-4">Stay updated with us and receive exclusive offers!</p>
-                            <div className="w-full flex justify-center items-center">
-                                <Form
+                            <div className="w-full flex justify-start items-center">
+                                <Button className="mr-6" onClick={()=>{
+                                    navigate("/login");
+                                }}>Sign In</Button>
+                                <Button onClick={()=>{
+                                    navigate("/register");
+                                }}>Register</Button>
+                                {/*<Form
                                     className=" w-full"
                                     layout="inline"
                                     onFinish={onFinish}
@@ -156,7 +216,7 @@ function UserMain() {
                                     <Form.Item className="">
                                         <Button>Subscribe</Button>
                                     </Form.Item>
-                                </Form>
+                                </Form>*/}
                             </div>
                             <div className="mt-10 w-3/5 flex items-center justify-between">
                                 <a href="#" >
