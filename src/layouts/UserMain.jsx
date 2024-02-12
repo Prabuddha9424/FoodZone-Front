@@ -1,4 +1,4 @@
-import {Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
+import {Badge, Button, ConfigProvider, Form, Input, Layout, Menu, theme} from 'antd';
 import AppLogo from '../assets/images/foodZone-logo.png'
 import VisaLogo from '../assets/images/visa.png'
 import MasterCardLogo from '../assets/images/master.png'
@@ -11,9 +11,17 @@ import {
     PhoneOutlined,
     SettingOutlined, TwitterOutlined, WhatsAppOutlined, YoutubeOutlined
 } from '@ant-design/icons';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { Link, Outlet } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import {FaShoppingCart, FaStore, FaUser} from "react-icons/fa";
+import {LiaSignOutAltSolid} from "react-icons/lia";
+import {countCustomerOrders} from "../helpers/ApiHelpers.js";
+import {IoFastFoodSharp} from "react-icons/io5";
+import {BiSolidDetail} from "react-icons/bi";
+import {RiContactsFill, RiLogoutCircleRFill} from "react-icons/ri";
+import { useLocation } from 'react-router-dom';
+import Cookies from "js-cookie";
 const {Header, Footer, Content} = Layout;
 
 function getItem(label, key, icon) {
@@ -25,24 +33,46 @@ function getItem(label, key, icon) {
 }
 
 const items = [
-    getItem(<Link to="/">Home</Link>, 1, <MailOutlined/>),
+    getItem(<Link to="/">Home</Link>, "/", <FaStore />),
     // getItem(<Link to="/menu">Menu</Link>, 2, <AppstoreOutlined/>),
-    getItem(<Link to="/items">Items</Link>, 3, <SettingOutlined/>),
-    getItem(<Link to="/about">About</Link>, 4, <SettingOutlined/>),
-    getItem(<Link to="/contact-us">Contact Us</Link>, 5, <SettingOutlined/>)
+    getItem(<Link to="/items">Items</Link>, "/items", <IoFastFoodSharp />),
+    getItem(<Link to="/about">About</Link>, "/about", <BiSolidDetail />),
+    getItem(<Link to="/contact-us">Contact Us</Link>, "/contact-us", <RiContactsFill />)
 ];
 
 function UserMain() {
-    const [current, setCurrent] = useState('1');
+    const navigate = useNavigate();
+    const [customerOrder, setCustomerOrder] = useState()
+    const [current, setCurrent] = useState('/');
+    const location = useLocation();
+    useEffect(() => {
+        countCompletedOrders();
+        const pathSegments = location.pathname;
+        setCurrent(pathSegments);
+    }, []);
     const onClick = (e) => {
         console.log('click ', e);
         setCurrent(e.key);
     };
-    const onFinish = (values) => {
-        console.log('Success:', values);
+    const logout = () => {
+        Cookies.remove('token');
+        localStorage.removeItem("token");
+        navigate("/login");
     };
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+    const goToCart = async () => {
+        const token =await Cookies.get('token');
+        console.log(token)
+        if ((token === null) || (token === "") ||(token=== undefined)){
+            navigate("/login");
+        }else {
+            navigate("/cart");
+        }
+    };
+    const countCompletedOrders = async () => {
+        const response = await countCustomerOrders(localStorage.getItem("email"));
+        setCustomerOrder(response ? response.data : "");
+        console.log(localStorage.getItem("email"))
+        console.log(response.data)
     };
     return (
         <ConfigProvider
@@ -85,12 +115,26 @@ function UserMain() {
                     <div className="w-full h-20 flex items-center justify-center">
                         <Menu
                             onClick={onClick}
-                            defaultOpenKeys={[1]}
+                            defaultOpenKeys={["/"]}
                             selectedKeys={[current]}
                             mode="horizontal"
                             items={items}
                             className="bg-transparent w-full"
                         />
+                    </div>
+                    <div className="flex items-baseline">
+                        {/*<Button className="border-none mr-6" onClick={()=>{navigate("/login")}}>
+                            <FaUser />
+                        </Button>*/}
+                        <Badge count={customerOrder} color="var(--primary-color)">
+                            <Button className="border-none" onClick={goToCart}>
+                                <FaShoppingCart />
+                            </Button>
+                        </Badge>
+                        <Button className="border-none ml-6" onClick={logout}>
+                            <RiLogoutCircleRFill />
+                        </Button>
+
                     </div>
                 </Header>
                 <Content style={{padding: '0 48px',}}>
@@ -152,8 +196,14 @@ function UserMain() {
                         <div className="w-5/12 h-full flex flex-col items-start">
                             <h1 className="text-xl font-medium mb-5">Stay Connected</h1>
                             <p className="pb-4">Stay updated with us and receive exclusive offers!</p>
-                            <div className="w-full flex justify-center items-center">
-                                <Form
+                            <div className="w-full flex justify-start items-center">
+                                <Button className="mr-6" onClick={()=>{
+                                    navigate("/login");
+                                }}>Sign In</Button>
+                                <Button onClick={()=>{
+                                    navigate("/register");
+                                }}>Register</Button>
+                                {/*<Form
                                     className=" w-full"
                                     layout="inline"
                                     onFinish={onFinish}
@@ -166,7 +216,7 @@ function UserMain() {
                                     <Form.Item className="">
                                         <Button>Subscribe</Button>
                                     </Form.Item>
-                                </Form>
+                                </Form>*/}
                             </div>
                             <div className="mt-10 w-3/5 flex items-center justify-between">
                                 <a href="#" >

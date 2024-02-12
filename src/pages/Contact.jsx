@@ -39,7 +39,7 @@ function Contact(){
                         our dedicated team is here to assist you. Reach out and let's embark on a
                         culinary journey together
                     </p>
-                    <Form
+                    {/*<Form
                         {...layout}
                         name="nest-messages"
                         onFinish={onFinish}
@@ -96,7 +96,7 @@ function Contact(){
                                 Submit
                             </Button>
                         </Form.Item>
-                    </Form>
+                    </Form>*/}
                 </Col>
                 <Col span={8}>
                     <img src={ContactUs} alt="staff" className="w-4/5 rounded-full border border-primaryColor"/>

@@ -11,6 +11,7 @@ export default {
         WarningColor: "var(--warning-color)",
         BackgroundColor: "var(--background-color)",
         textColor:"var(--text-color)",
+        primaryShadow:"var(--primary-shadow-color)"
       },
       fontFamily: {
         serif: ['DM Serif Display', 'serif'],

@@ -1,86 +1,65 @@
 import ItemCard from "./ItemCard.jsx";
-import SetMenu1 from "../assets/images/set menu-1-Indian-Naan-Family-Meal.jpg";
+import {getAllDeserts} from "../helpers/ApiHelpers.js";
+import {useEffect, useState} from "react";
+import {Spin} from "antd";
 
-const items = [
-    {
-        id: 1,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-    {
-        id: 2,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-    {
-        id: 3,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-    {
-        id: 4,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-    {
-        id: 5,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-    {
-        id: 6,
-        image: SetMenu1,
-        itemName: "Indian Naan Family Meal-Props",
-        itemPrice: "1234",
-        itemDesc1: "para 1",
-        itemDesc2: "para 2",
-        itemDesc3: "para 3"
-    },
-]
+let allBeverages = [];
 
 function Desert() {
+    useEffect(() => {
+        fetchData();
+    }, []);
+    const [cartData, setCartData] = useState([]);
+    const [spinning, setSpinning] = useState(false);
+    const fetchData = async () => {
+        const response = await getAllDeserts();
+        allBeverages = response.data;
+        await setData(allBeverages);
+    }
+    const setData = async (dataArr) => {
+        setSpinning(true);
+        if (dataArr === null) {
+            setCartData([]);
+        } else if (dataArr.length !== null) {
+            let cart = [];
+            dataArr.forEach((data, x) => {
+                let dataObj = {
+                    key: x,
+                    name: data.name,
+                    price: data.price,
+                    qty: data.qty,
+                    category: data.category,
+                    image: data.image,
+                    intro: data.intro,
+                };
+                cart.push(dataObj);
+            })
+            setCartData(cart);
+        } else {
+            setCartData([]);
+        }
+        setSpinning(false);
+    };
     return (
-        <div className="border-b border-primaryColor mb-2">
-            <p className="text-xl text-textColor font-serif">Desert</p>
-            <br/>
-            <div className="w-full grid grid-cols-3 gap-16 px-10 pb-10">
-                {
-                    items.map((item) => (
+        <Spin spinning={spinning}>
+            <div className="border-b border-primaryColor mb-2">
+                <p className="text-xl text-textColor font-serif">Desserts</p>
+                <br/>
+                <div className="w-full grid grid-cols-3 gap-16 px-10 pb-10">
+                    {cartData && cartData.map((item) => (
                         <ItemCard
-                            key={item.id}
+                            key={item.key}
                             image={item.image}
-                            itemName={item.itemName}
-                            itemPrice={item.itemPrice}
-                            itemDesc1={item.itemDesc1}
-                            itemDesc2={item.itemDesc2}
-                            itemDesc3={item.itemDesc3}
+                            itemName={item.name}
+                            itemPrice={item.price}
+                            itemDesc={item.intro}
+                            Quantity={item.qty}
                         />
-                    ))
-                }
+                    ))}
+                </div>
             </div>
-        </div>
-
-    )
+        </Spin>
+    );
 }
 
 export default Desert;

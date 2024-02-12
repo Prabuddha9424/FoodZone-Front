@@ -4,10 +4,44 @@ import RicePlate from '../assets/images/home-rice-plate.png'
 import Chef from '../assets/images/home-chef.jpg'
 import ChefTop from '../assets/images/home-chef-1.jpg'
 import ChefBottom from '../assets/images/home-chef-2.jpg'
-import SetMenu1 from '../assets/images/set menu-1-Indian-Naan-Family-Meal.jpg'
 import {ClockCircleFilled, CrownFilled} from "@ant-design/icons";
+import {getAllSetItems} from "../helpers/ApiHelpers.js";
+import {useEffect, useState} from "react";
+
+let allBeverages = [];
 
 function Home() {
+    useEffect(() => {
+        fetchData();
+    }, []);
+    const [cartData, setCartData] = useState([]);
+    const fetchData = async () => {
+        const response = await getAllSetItems();
+        allBeverages = response.data;
+        await setData(allBeverages);
+    }
+    const setData = async (dataArr) => {
+        if (dataArr === null) {
+            setCartData([]);
+        } else if (dataArr.length !== null) {
+            let cart = [];
+            dataArr.forEach((data, x) => {
+                let dataObj = {
+                    key: x,
+                    name: data.name,
+                    price: data.price,
+                    qty: data.qty,
+                    category: data.category,
+                    image: data.image,
+                    intro: data.intro,
+                };
+                cart.push(dataObj);
+            })
+            setCartData(cart);
+        } else {
+            setCartData([]);
+        }
+    };
     return (
         <div className="text-textColor">
             {/*-----------------1st row--------------------*/}
@@ -97,12 +131,26 @@ function Home() {
                     Explore Our Most Popular Set Menu
                 </p>
                 <Carousel autoplay={true} infinite={true} slidesToShow={3} slidesToScroll={1}>
-                    <div>
-                        <div className="flex flex-col items-center justify-center mb-6">
-                            <img
-                                src={SetMenu1}
-                                alt="Indian Naan Family Meal "
-                                className="w-[186px] h-[186px] rounded-full border border-primaryColor hover:shadow-md hover:shadow-primaryColor"
+                    {cartData && cartData.map((item) => (
+                        <div key={item.key}>
+                            <div className="flex flex-col items-center justify-center mb-6">
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-[186px] h-[186px] rounded-full border border-primaryColor hover:shadow-md hover:shadow-primaryColor"
+                                />
+                                <p className="text-base font-bold text-center p-3">
+                                    {item.name}
+                                </p>
+                            </div>
+                        </div>
+                ))}
+                {/*<div>
+                    <div className="flex flex-col items-center justify-center mb-6">
+                        <img
+                            src={SetMenu1}
+                            alt="Indian Naan Family Meal "
+                            className="w-[186px] h-[186px] rounded-full border border-primaryColor hover:shadow-md hover:shadow-primaryColor"
                             />
                             <p className="text-base font-bold text-center p-3">
                                 Indian Naan Family Meal
@@ -173,7 +221,7 @@ function Home() {
                                 Indian Naan Family Meal
                             </p>
                         </div>
-                    </div>
+                    </div>*/}
                 </Carousel>
             </div>
         </div>
